@@ -1,7 +1,6 @@
 package process
 
 import (
-	"log"
 	"slices"
 	"strings"
 	"unicode/utf8"
@@ -285,7 +284,6 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 			// (✓) binary search for a range of rune
 			var start, end int
 			temp := Search(sl.Data.L, x)
-			log.Println("start temp: ", temp)
 			start = temp[0]
 			temp = Search(sl.Data.L, x+width-1)
 			if len(temp) == 1 {
@@ -295,7 +293,6 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 			}
 			lineRunes := make([]BoundsStruct, end-start+1)
 			copy(lineRunes, sl.Data.L[start:end+1])
-			log.Println("linerunes: ", lineRunes, start, end, sl.Data.L, x, width)
 			// check for first rune, if width over 1 (max 2), replace to SPACE_RUNEDATA
 			if lineRunes[0].getBounds()[0] < x {
 				lineRunes[0] = SPACE_RUNEDATA
@@ -343,13 +340,11 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 				buf.WriteString(ESCAPE_SEQUENCE_END)
 			}
 			// add rest
-			log.Println("in")
 			if index <= len(lineRunes)-1 {
 				// buf.Write(lineRunes[index:])
 				subRuneDatas := lineRunes[index:]
 				for _, runeData := range subRuneDatas {
 					r := runeData.(*RuneData)
-					log.Println(r)
 					buf.Write(r.Byte)
 				}
 			}
