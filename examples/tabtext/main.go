@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/ogios/clipviewport"
@@ -9,14 +11,7 @@ import (
 const (
 	HEIGHT  = 6
 	WIDTH   = HEIGHT * 2
-	CONTENT = `Hello, World! Hello, World! Hello, World! Hello, World!
-你好，世界！ 你好，世界！ 你好，世界！ 你好，世界！
-こんにちは、世界よ！ こんにちは、世界よ！ こんにちは、世界よ！ こんにちは、世界よ！
-Bonjour à tous ! Bonjour à tous ! Bonjour à tous ! Bonjour à tous !
-Γεια σου, κόσμε! Γεια σου, κόσμε! Γεια σου, κόσμε! Γεια σου, κόσμε!
-안녕하세요, 세상 여러분! 안녕하세요, 세상 여러분! 안녕하세요, 세상 여러분! 안녕하세요, 세상 여러분!
-Привет, мир! Привет, мир! Привет, мир! Привет, мир!
-Hej, världen! Hej, världen! Hej, världen! Hej, världen!`
+	CONTENT = "\t111"
 )
 
 var BorderStyle = lipgloss.NewStyle().
@@ -32,7 +27,9 @@ func NewTestModel() tea.Model {
 	t := &TestViewModel{}
 	clip := clipviewport.NewClipViewportModel().(*clipviewport.ClipViewportModel)
 	clip.SetBlock(0, 0, WIDTH, HEIGHT)
-	clip.SetContent(CONTENT)
+	fmt.Println(CONTENT)
+	_, lines := clip.SetContent(CONTENT)
+	fmt.Println(lines, lines[0], lines[0].Data)
 	t.ClipViewModel = clip
 	return t
 }
@@ -63,6 +60,7 @@ func (t *TestViewModel) View() string {
 
 func main() {
 	// NewTestModel().View()
+	tea.LogToFile("debug.log", "")
 	if _, err := tea.NewProgram(NewTestModel()).Run(); err != nil {
 		panic(err)
 	}

@@ -1,28 +1,50 @@
 package main
 
 import (
+	"fmt"
+	"strings"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/ogios/clipviewport"
 )
 
 const (
-	HEIGHT  = 6
-	WIDTH   = HEIGHT * 2
-	CONTENT = `Hello, World! Hello, World! Hello, World! Hello, World!
-你好，世界！ 你好，世界！ 你好，世界！ 你好，世界！
-こんにちは、世界よ！ こんにちは、世界よ！ こんにちは、世界よ！ こんにちは、世界よ！
-Bonjour à tous ! Bonjour à tous ! Bonjour à tous ! Bonjour à tous !
-Γεια σου, κόσμε! Γεια σου, κόσμε! Γεια σου, κόσμε! Γεια σου, κόσμε!
-안녕하세요, 세상 여러분! 안녕하세요, 세상 여러분! 안녕하세요, 세상 여러분! 안녕하세요, 세상 여러분!
-Привет, мир! Привет, мир! Привет, мир! Привет, мир!
-Hej, världen! Hej, världen! Hej, världen! Hej, världen!`
+	HEIGHT = 6
+	WIDTH  = HEIGHT * 2
 )
 
-var BorderStyle = lipgloss.NewStyle().
-	Width(WIDTH).Height(HEIGHT).
-	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color("#b31a66"))
+var (
+	Blue        = "#0066ff"
+	BgBlueStyle = lipgloss.NewStyle().Background(lipgloss.Color(Blue))
+	FgBlueStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(Blue))
+	BorderStyle = lipgloss.NewStyle().
+			Width(WIDTH).Height(HEIGHT).
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("#b31a66"))
+
+	CONTENT = func() string {
+		var buf strings.Builder
+		ss := []string{
+			"Hello, World!",
+			"你好，世界！",
+			"こんにちは、世界よ！",
+			// "مرحباً أيها العالم!",
+			"Bonjour à tous !",
+			"Γεια σου, κόσμε!",
+			"안녕하세요, 세상 여러분!",
+			"Привет, мир!",
+			"Hej, världen!",
+		}
+		for i, v := range ss {
+			buf.WriteString(v + BgBlueStyle.Render(v) + FgBlueStyle.Render(v) + v)
+			if i < len(ss)-1 {
+				buf.WriteString("\n")
+			}
+		}
+		return buf.String()
+	}()
+)
 
 type TestViewModel struct {
 	ClipViewModel tea.Model
@@ -62,7 +84,7 @@ func (t *TestViewModel) View() string {
 }
 
 func main() {
-	// NewTestModel().View()
+	fmt.Println(CONTENT)
 	if _, err := tea.NewProgram(NewTestModel()).Run(); err != nil {
 		panic(err)
 	}
