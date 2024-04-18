@@ -1,5 +1,7 @@
 package process
 
+// if endIndex bigger than length, return copy of rest.
+// mainly for cut slice easier
 func SliceFrom[S ~[]E, E comparable](src S, start, end int) S {
 	inputLen := len(src)
 	if start < inputLen {

@@ -1,6 +1,7 @@
 package process
 
 import (
+	"log"
 	"slices"
 	"strings"
 	"unicode/utf8"
@@ -174,24 +175,49 @@ type RuneDataList struct {
 	TotalWidth int
 }
 
+// NOTE: Planning to make these available to be set from outside
+// since i'm not really sure if the width can be hanlde just like this
+const TAB_RUNE = '\t'
+
+// var TAB_BYTES = []byte{32, 32, 32, 32}
+
+func runeProcess(v rune, visibleIndex int) ([]BoundsStruct, int) {
+	rs := []BoundsStruct{}
+	if v == TAB_RUNE {
+		for i := 0; i < 4; i++ {
+			rs = append(rs, &RuneData{
+				Byte:  SPACE_HODLER,
+				Bound: [2]int{visibleIndex, visibleIndex + 1},
+			})
+			visibleIndex++
+		}
+	} else {
+		bs := []byte{}
+		bs = utf8.AppendRune(bs, v)
+		w := runewidth.RuneWidth(v)
+		rs = append(rs, &RuneData{
+			Byte:  slices.Clip(bs),
+			Bound: [2]int{visibleIndex, visibleIndex + w},
+		})
+		visibleIndex += w
+	}
+	return slices.Clip(rs), visibleIndex
+}
+
 // init RuneData list given runes
 //
 // RuneDataList can only be set with this function, no more process allowed afterwards
 func (r *RuneDataList) Init(s []rune) *RuneDataList {
-	r.L = make([]BoundsStruct, len(s))
+	// r.L = make([]BoundsStruct, len(s))
+	r.L = make([]BoundsStruct, 0)
 	visibleIndex := 0
 	// for every rune, get its width, start and end index refers to the visible line
 	// and save rune data into bytes
-	for i, v := range s {
-		bs := []byte{}
-		bs = utf8.AppendRune(bs, v)
-		w := runewidth.RuneWidth(v)
-		r.L[i] = &RuneData{
-			Byte:  slices.Clip(bs),
-			Bound: [2]int{visibleIndex, visibleIndex + w},
-		}
-		r.TotalWidth += w
-		visibleIndex += w
+	for _, v := range s {
+		rs, index := runeProcess(v, visibleIndex)
+		r.L = append(r.L, rs...)
+		r.TotalWidth += index - visibleIndex
+		visibleIndex = index
 	}
 	return r
 }
@@ -235,6 +261,12 @@ var SPACE_RUNEDATA = &RuneData{
 	Byte: []byte(SPACE_HODLER),
 }
 
+func MakeSpaceHolderRuneData(length int) RuneData {
+	return RuneData{
+		Byte: []byte(strings.Repeat(" ", length)),
+	}
+}
+
 // extract certain area of the given lines, and render ansi sequence
 func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height int) string {
 	// get visible lines
@@ -244,6 +276,7 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 	// not sure if this is necessary, it only considers the worst case of raw string(no ansi sequence)
 	// if there are ansi sequences, the buf cap may still needs to grow when calling `write`
 	buf.Grow((width + 1) * height)
+
 	// lines
 	for lineIndex, sl := range lines {
 		// if x is within the width of line
@@ -252,6 +285,7 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 			// (✓) binary search for a range of rune
 			var start, end int
 			temp := Search(sl.Data.L, x)
+			log.Println("start temp: ", temp)
 			start = temp[0]
 			temp = Search(sl.Data.L, x+width-1)
 			if len(temp) == 1 {
@@ -261,6 +295,7 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 			}
 			lineRunes := make([]BoundsStruct, end-start+1)
 			copy(lineRunes, sl.Data.L[start:end+1])
+			log.Println("linerunes: ", lineRunes, start, end, sl.Data.L, x, width)
 			// check for first rune, if width over 1 (max 2), replace to SPACE_RUNEDATA
 			if lineRunes[0].getBounds()[0] < x {
 				lineRunes[0] = SPACE_RUNEDATA
@@ -269,8 +304,6 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 			if endRune := lineRunes[len(lineRunes)-1]; endRune != SPACE_RUNEDATA && endRune.getBounds()[1] > x+width {
 				lineRunes[len(lineRunes)-1] = SPACE_RUNEDATA
 			}
-			// fmt.Println("indexes:", start, end)
-			// fmt.Println("lineRunes:", lineRunes, lineRunes[0])
 
 			// start from lineRunes start
 			index := 0
@@ -300,7 +333,7 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 					temp = temp.Sub
 				}
 				// add rest
-				subRuneDatas := lineRunes[index:endIndex]
+				subRuneDatas := SliceFrom(lineRunes, index, endIndex)
 				for _, runeData := range subRuneDatas {
 					r := runeData.(*RuneData)
 					buf.Write(r.Byte)
@@ -310,11 +343,13 @@ func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 				buf.WriteString(ESCAPE_SEQUENCE_END)
 			}
 			// add rest
+			log.Println("in")
 			if index <= len(lineRunes)-1 {
 				// buf.Write(lineRunes[index:])
 				subRuneDatas := lineRunes[index:]
 				for _, runeData := range subRuneDatas {
 					r := runeData.(*RuneData)
+					log.Println(r)
 					buf.Write(r.Byte)
 				}
 			}

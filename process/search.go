@@ -14,15 +14,16 @@ func Search(list []BoundsStruct, pos int) []int {
 			step = 1
 		}
 	}
-	halfStep()
 	// 1. index between one bounds start & end
 	// or
 	// 2.between ( last end and current start ) or ( current end and next start )
 	for {
+		halfStep()
 		// fmt.Println("for round:", i)
 		v := list[i]
 		vBound := v.getBounds()
 		// between bounds
+		// or, width is 0 and index is the same
 		if vBound[0] <= pos && vBound[1] > pos {
 			return []int{i}
 		} else {
@@ -38,7 +39,6 @@ func Search(list []BoundsStruct, pos int) []int {
 						// i smaller than prev end means still space to go left
 						// i = i - int(math.Floor(float64(i)/2))
 						i -= step
-						halfStep()
 					}
 				} else {
 					// first one and i smaller than first start means circumstance 2
@@ -57,7 +57,6 @@ func Search(list []BoundsStruct, pos int) []int {
 						// i = i + int(math.Ceil(float64(i)/2))
 						// i = i + int(math.Floor(float64(listLen-i)/2))
 						i += step
-						halfStep()
 					}
 				} else {
 					// last one and i bigger than end means circumstance 2
