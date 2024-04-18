@@ -39,6 +39,14 @@ func NewClipViewportModel() tea.Model {
 			c.NextCol(1)
 			return nil
 		},
+		"H": func() tea.Cmd {
+			c.PrevCol(c.Block[2] / 2)
+			return nil
+		},
+		"L": func() tea.Cmd {
+			c.NextCol(c.Block[2] / 2)
+			return nil
+		},
 	}
 	return c
 }
