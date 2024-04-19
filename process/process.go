@@ -28,13 +28,7 @@ type ANSIQueueItem struct {
 	startIndex int
 }
 
-const (
-	ESCAPE_SEQUENCE     = '\x1b'
-	ESCAPE_SEQUENCE_END = string(ESCAPE_SEQUENCE) + "[0m"
-)
-
 // NOTE: Planning to make these rune process function available to be set from outside
-// since i'm not really sure if the width can be hanlde just like this
 const TAB_RUNE = '\t'
 
 var TAB_BYTES = []byte{32, 32, 32, 32}
@@ -62,39 +56,45 @@ func GetANSIs(s string) (*ANSITableList, string) {
 	// NOTE: do not use `for i := range string` index since it's not i+=1 but i+=byte_len
 	// solution: transform s into []rune or use custom variable for index
 	i := 0
+	var ansiItem *ANSIQueueItem = nil
 	for _, v := range s {
 		// meet `esc` char
 		if v == ESCAPE_SEQUENCE {
 			// enable ansi mode until meet 'm'
 			ansi = true
-			// using utf8 rune function
+			// NOTE: using utf8 rune function
 			// but maybe just byte(v) is enough since ansi only contains rune of one byte?
 			byteData := []byte{}
 			byteData = utf8.AppendRune(byteData, v)
-			ansiQueue = append(ansiQueue, &ANSIQueueItem{
+			ansiItem = &ANSIQueueItem{
 				startIndex: i,
 				data:       slices.Clip(byteData),
-			})
+			}
 		} else {
 			// in ansi sequence content mode
 			if ansi {
-				last := ansiQueue[len(ansiQueue)-1]
-				last.data = utf8.AppendRune(last.data, v)
+				ansiItem.data = utf8.AppendRune(ansiItem.data, v)
 				// end of an ansi sequence. terminate
-				if v == 'm' {
+				if IsEscEnd(v) {
 					ansi = false
 					// clip cap
-					last.data = slices.Clip(last.data)
-					// ends all ansi sequences in queue and create ansi table
-					if string(last.data) == ESCAPE_SEQUENCE_END {
-						// skip if ansi queue only contain "[0m", which means no ansi actually working
-						if len(ansiQueue) > 1 {
-							table := queueToTable(ansiQueue[:len(ansiQueue)-1], i)
-							tables = append(tables, table)
+					ansiItem.data = slices.Clip(ansiItem.data)
+					// filter SGR(function named `m`) and push into queue
+					if IsSGR(ansiItem.data) {
+						ansiQueue = append(ansiQueue, ansiItem)
+						// ends all ansi SGR sequences in queue and create ansi table
+						if IsEndOfSGR(ansiItem.data) {
+							// skip if ansi queue only contains "[0m", which means no SGR actually working
+							if len(ansiQueue) > 1 {
+								table := queueToTable(ansiQueue[:len(ansiQueue)-1], i)
+								tables = append(tables, table)
+							}
+							// reset queue
+							ansiQueue = make([]*ANSIQueueItem, 0)
 						}
-						// reset queue
-						ansiQueue = make([]*ANSIQueueItem, 0)
 					}
+					// reset item
+					ansiItem = nil
 				}
 			} else {
 				// normal content
@@ -187,19 +187,18 @@ type RuneDataList struct {
 //
 // RuneDataList can only be set with this function, no more process allowed afterwards
 func (r *RuneDataList) Init(s []rune) *RuneDataList {
-	// r.L = make([]BoundsStruct, len(s))
-	r.L = make([]BoundsStruct, 0)
+	r.L = make([]BoundsStruct, len(s))
 	visibleIndex := 0
 	// for every rune, get its width, start and end index refers to the visible line
 	// and save rune data into bytes
-	for _, v := range s {
+	for i, v := range s {
 		bs := []byte{}
 		bs = utf8.AppendRune(bs, v)
 		w := runewidth.RuneWidth(v)
-		r.L = append(r.L, &RuneData{
+		r.L[i] = &RuneData{
 			Byte:  slices.Clip(bs),
 			Bound: [2]int{visibleIndex, visibleIndex + w},
-		})
+		}
 		r.TotalWidth += w
 		visibleIndex += w
 	}
@@ -238,7 +237,6 @@ func ProcessContent(s string) (*ANSITableList, []*SubLine) {
 	return atablelist, sublines
 }
 
-// max visible rune width is 2?
 var (
 	SPACE_HODLER   = []byte(" ")
 	SPACE_RUNEDATA = &RuneData{
@@ -286,12 +284,10 @@ func CropView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 			index := 0
 			// atable slice
 			atables := atablelist.GetSlice(start+sl.Bound[0], end+sl.Bound[0])
-			// fmt.Println("tables:", atables)
 			// every table
 			for _, a := range atables {
 				// table's sub tables
 				temp := a.(*ANSITable)
-				// fmt.Println("temp table:", temp)
 				endIndex := temp.Bound[1] - sl.Bound[0] - start
 				for temp != nil {
 					startIndex := temp.Bound[0] - sl.Bound[0] - start
