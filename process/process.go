@@ -258,7 +258,7 @@ func MakeSpaceHolderRuneData(length int) RuneData {
 }
 
 // extract certain area of the given lines, and render ansi sequence
-func ClipView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height int) string {
+func CropView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height int) string {
 	// get visible lines
 	lines = SliceFrom(lines, y, y+height)
 	// clip every visible line and add ansi

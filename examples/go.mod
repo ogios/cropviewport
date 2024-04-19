@@ -5,7 +5,7 @@ go 1.22.2
 require (
 	github.com/charmbracelet/bubbletea v0.25.0
 	github.com/charmbracelet/lipgloss v0.10.0
-	github.com/ogios/clipviewport v0.0.0-00010101000000-000000000000
+	github.com/ogios/cropviewport v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -28,4 +28,4 @@ require (
 	golang.org/x/text v0.3.8 // indirect
 )
 
-replace github.com/ogios/clipviewport => ../
+replace github.com/ogios/cropviewport => ../

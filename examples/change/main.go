@@ -3,7 +3,7 @@ package main
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/ogios/clipviewport"
+	"github.com/ogios/cropviewport"
 )
 
 const (
@@ -45,7 +45,7 @@ var (
 )
 
 type TestViewModel struct {
-	ClipViewModel tea.Model
+	CropViewModel tea.Model
 	Cacher        []*ContentData
 	CurrentIndex  int
 }
@@ -59,16 +59,16 @@ func NewTestModel() tea.Model {
 			Raw: v,
 		}
 	}
-	clip := clipviewport.NewClipViewportModel().(*clipviewport.ClipViewportModel)
-	clip.SetBlock(0, 0, WIDTH, HEIGHT)
-	t.ClipViewModel = clip
+	crop := cropviewport.NewCropViewportModel().(*cropviewport.CropViewportModel)
+	crop.SetBlock(0, 0, WIDTH, HEIGHT)
+	t.CropViewModel = crop
 	t.SetContent(0)
 	return t
 }
 
 func (t *TestViewModel) SetContent(index int) {
 	t.CurrentIndex = index
-	view := t.ClipViewModel.(*clipviewport.ClipViewportModel)
+	view := t.CropViewModel.(*cropviewport.CropViewportModel)
 	c := t.Cacher[index]
 	if c.Lines == nil || c.Table == nil {
 		c.Table, c.Lines = view.SetContent(c.Raw)
@@ -98,13 +98,13 @@ func (t *TestViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	m, cmd := t.ClipViewModel.Update(msg)
-	t.ClipViewModel = m
+	m, cmd := t.CropViewModel.Update(msg)
+	t.CropViewModel = m
 	return t, cmd
 }
 
 func (t *TestViewModel) View() string {
-	return BorderStyle.Render(t.ClipViewModel.View())
+	return BorderStyle.Render(t.CropViewModel.View())
 }
 
 func main() {

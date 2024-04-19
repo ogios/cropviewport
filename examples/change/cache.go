@@ -1,6 +1,6 @@
 package main
 
-import "github.com/ogios/clipviewport/process"
+import "github.com/ogios/cropviewport/process"
 
 type ContentCacher[T any] struct {
 	pool map[string]T

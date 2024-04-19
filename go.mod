@@ -1,4 +1,4 @@
-module github.com/ogios/clipviewport
+module github.com/ogios/cropviewport
 
 go 1.22.2
 
