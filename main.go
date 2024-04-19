@@ -81,7 +81,7 @@ func (c *ClipViewportModel) PrevLine(step int) {
 }
 
 func (c *ClipViewportModel) NextLine(step int) {
-	c.Block[1] = min(c.Block[1]+step, len(c.Sublines)-c.Block[3])
+	c.Block[1] = min(c.Block[1]+step, max(len(c.Sublines)-c.Block[3], 0))
 }
 
 func (c *ClipViewportModel) PrevCol(step int) {
