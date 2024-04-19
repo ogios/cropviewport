@@ -111,7 +111,7 @@ func (c *CropViewportModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // const NO_CONTENT = "No content available"
 // var NO_CONTENT_TABLE, NO_CONTENT_SUBLINES = process.ProcessContent("No content available")
-var NO_CONTENT_TABLE, NO_CONTENT_SUBLINES = process.ProcessContent("No content available 暂无内容")
+var NO_CONTENT_TABLE, NO_CONTENT_SUBLINES = process.ProcessContent("No content available")
 
 func (c *CropViewportModel) View() string {
 	if c.ANSITableList == nil || c.Sublines == nil {

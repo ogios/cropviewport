@@ -133,12 +133,6 @@ func queueToTable(queue []*ANSIQueueItem, endIndex int) *ANSITable {
 	return root
 }
 
-const (
-	MODE_START = 0
-	MODE_END   = 1
-)
-
-// var EMPTY_ANSITABLELIST = make([]*ANSITable, 0)
 var EMPTY_ANSITABLELIST = make([]BoundsStruct, 0)
 
 // get a slice of ansi table, it will find all tables between `startIndex` and `endIndex`
@@ -223,8 +217,6 @@ func (r *RuneData) getBounds() [2]int {
 
 const LINE_SPLIT = "\n"
 
-var SPACE_HODLER = []byte(" ")
-
 // separate ansi and normal string, separate lines into RuneData list
 func ProcessContent(s string) (*ANSITableList, []*SubLine) {
 	// separate ansi and normal string
@@ -247,15 +239,12 @@ func ProcessContent(s string) (*ANSITableList, []*SubLine) {
 }
 
 // max visible rune width is 2?
-var SPACE_RUNEDATA = &RuneData{
-	Byte: []byte(SPACE_HODLER),
-}
-
-func MakeSpaceHolderRuneData(length int) RuneData {
-	return RuneData{
-		Byte: []byte(strings.Repeat(" ", length)),
+var (
+	SPACE_HODLER   = []byte(" ")
+	SPACE_RUNEDATA = &RuneData{
+		Byte: SPACE_HODLER,
 	}
-}
+)
 
 // extract certain area of the given lines, and render ansi sequence
 func CropView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height int) string {
