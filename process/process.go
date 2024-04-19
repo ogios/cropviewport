@@ -33,6 +33,22 @@ const (
 	ESCAPE_SEQUENCE_END = string(ESCAPE_SEQUENCE) + "[0m"
 )
 
+// NOTE: Planning to make these rune process function available to be set from outside
+// since i'm not really sure if the width can be hanlde just like this
+const TAB_RUNE = '\t'
+
+var TAB_BYTES = []byte{32, 32, 32, 32}
+
+func processRune(r rune, writer *strings.Builder) int {
+	if r == TAB_RUNE {
+		writer.Write(TAB_BYTES)
+		return len(TAB_BYTES)
+	} else {
+		writer.WriteRune(r)
+		return 1
+	}
+}
+
 // split `string with ansi` into `ansi sequences` and `raw string`
 func GetANSIs(s string) (*ANSITableList, string) {
 	// preserve normal string
@@ -82,8 +98,7 @@ func GetANSIs(s string) (*ANSITableList, string) {
 				}
 			} else {
 				// normal content
-				normalString.WriteRune(v)
-				i++
+				i += processRune(v, &normalString)
 			}
 		}
 	}
@@ -173,12 +188,6 @@ type RuneDataList struct {
 	L          []BoundsStruct
 	TotalWidth int
 }
-
-// NOTE: Planning to make these available to be set from outside
-// since i'm not really sure if the width can be hanlde just like this
-const TAB_RUNE = '\t'
-
-// var TAB_BYTES = []byte{32, 32, 32, 32}
 
 // init RuneData list given runes
 //
