@@ -1,4 +1,5 @@
 # Crop Viewport
+
 Crops view from string given position and size.  
 **With ANSI support**
 
@@ -10,7 +11,8 @@ For **Usage** checkout [`examples`](https://github.com/ogios/clipviewport/tree/m
 
 Keymaps are inside the model struct, can be changed if you want to.
 
-default keymaps:
+Default keymaps:
+
 - `j` move down 1 line
 - `k` move up 1 line
 - `ctrl+d` move down half page
@@ -25,9 +27,7 @@ default keymaps:
 - if not enough place for a char width over 1, the char will not display and replaced to (multiple) white space.
 - `TAB(\t)` will be replaced by 4 `SPACE( )`, and it's hard coded, not sure if [`processRune`](https://github.com/ogios/clipviewport/blob/master/process/process.go#L42) should be available to access from the outside
 
-
-
 ## Others
 
-
-So, this is actually the first time i use `go` to make stuffs for others to use. Any suggestion is welcomed here
+So, this is actually the first time i use `go` to make stuffs for others to use.  
+**Any suggestion is welcomed here**
