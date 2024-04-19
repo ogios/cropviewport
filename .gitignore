@@ -1,2 +1,4 @@
 # examples/tabtext/debug.log
 *.log
+
+test.go
