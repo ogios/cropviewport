@@ -1,7 +1,9 @@
 # Crop Viewport
 
+> A component for bubbletea.
+
 Crops view from string given position and size.  
-**With ANSI support**
+**With ANSI support**.
 
 ![ansitext](https://github.com/ogios/clipviewport/assets/96933655/c95e3338-b297-45f2-9da4-00be3ed5e3ff)
 
