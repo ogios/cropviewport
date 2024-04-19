@@ -20,7 +20,7 @@ Default keymaps:
 - `ctrl+d` move down half page
 - `ctrl+u` move up half page
 - `h` move left 1 column
-- `k` move right 1 column
+- `l` move right 1 column
 - `H` move left half row
 - `L` move right half row
 
