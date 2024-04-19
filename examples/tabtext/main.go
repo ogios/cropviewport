@@ -60,7 +60,7 @@ func (t *TestViewModel) View() string {
 
 func main() {
 	// NewTestModel().View()
-	tea.LogToFile("debug.log", "")
+	// tea.LogToFile("debug.log", "")
 	if _, err := tea.NewProgram(NewTestModel()).Run(); err != nil {
 		panic(err)
 	}
