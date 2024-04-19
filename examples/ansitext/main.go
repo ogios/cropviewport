@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -18,6 +19,14 @@ var (
 	Blue        = "#0066ff"
 	BgBlueStyle = lipgloss.NewStyle().Background(lipgloss.Color(Blue))
 	FgBlueStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(Blue))
+	OtherStyle  = lipgloss.NewStyle().
+			Bold(true).
+			Italic(true).
+			Faint(true).
+			Blink(true).
+			Strikethrough(true).
+			Underline(true).
+			Reverse(true)
 	BorderStyle = lipgloss.NewStyle().
 			Width(WIDTH).Height(HEIGHT).
 			BorderStyle(lipgloss.NormalBorder()).
@@ -37,7 +46,9 @@ var (
 			"Hej, världen!",
 		}
 		for i, v := range ss {
-			buf.WriteString(v + BgBlueStyle.Render(v) + FgBlueStyle.Render(v) + v)
+			// buf.WriteString(v + BgBlueStyle.Render(v) + OtherStyle.Render(FgBlueStyle.Render(v)+v))
+			os.WriteFile("debug.log", []byte(OtherStyle.Render(FgBlueStyle.Render(v)+v)), 0666)
+			buf.WriteString(v + BgBlueStyle.Render(v) + FgBlueStyle.Render(v) + OtherStyle.Render(v))
 			if i < len(ss)-1 {
 				buf.WriteString("\n")
 			}
