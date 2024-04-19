@@ -180,29 +180,6 @@ const TAB_RUNE = '\t'
 
 // var TAB_BYTES = []byte{32, 32, 32, 32}
 
-func runeProcess(v rune, visibleIndex int) ([]BoundsStruct, int) {
-	rs := []BoundsStruct{}
-	if v == TAB_RUNE {
-		for i := 0; i < 4; i++ {
-			rs = append(rs, &RuneData{
-				Byte:  SPACE_HODLER,
-				Bound: [2]int{visibleIndex, visibleIndex + 1},
-			})
-			visibleIndex++
-		}
-	} else {
-		bs := []byte{}
-		bs = utf8.AppendRune(bs, v)
-		w := runewidth.RuneWidth(v)
-		rs = append(rs, &RuneData{
-			Byte:  slices.Clip(bs),
-			Bound: [2]int{visibleIndex, visibleIndex + w},
-		})
-		visibleIndex += w
-	}
-	return slices.Clip(rs), visibleIndex
-}
-
 // init RuneData list given runes
 //
 // RuneDataList can only be set with this function, no more process allowed afterwards
@@ -213,10 +190,15 @@ func (r *RuneDataList) Init(s []rune) *RuneDataList {
 	// for every rune, get its width, start and end index refers to the visible line
 	// and save rune data into bytes
 	for _, v := range s {
-		rs, index := runeProcess(v, visibleIndex)
-		r.L = append(r.L, rs...)
-		r.TotalWidth += index - visibleIndex
-		visibleIndex = index
+		bs := []byte{}
+		bs = utf8.AppendRune(bs, v)
+		w := runewidth.RuneWidth(v)
+		r.L = append(r.L, &RuneData{
+			Byte:  slices.Clip(bs),
+			Bound: [2]int{visibleIndex, visibleIndex + w},
+		})
+		r.TotalWidth += w
+		visibleIndex += w
 	}
 	return r
 }
