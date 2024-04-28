@@ -264,9 +264,7 @@ func CropView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 			temp := Search(sl.Data.L, x)
 			start = temp[0]
 			temp = Search(sl.Data.L, x+width-1)
-			if len(temp) == 1 {
-				end = temp[0]
-			} else if len(temp) == 2 {
+			if len(temp) > 0 {
 				end = temp[0]
 			}
 			lineRunes := make([]BoundsStruct, end-start+1)
@@ -293,7 +291,8 @@ func CropView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 					startIndex := temp.Bound[0] - sl.Bound[0] - start
 					// before table startIndex
 					if startIndex > index {
-						subRuneDatas := lineRunes[index:startIndex]
+						subRuneDatas := SliceFrom(lineRunes, index, startIndex)
+						// subRuneDatas := lineRunes[index:startIndex]
 						for _, runeData := range subRuneDatas {
 							r := runeData.(*RuneData)
 							buf.Write(r.Byte)
