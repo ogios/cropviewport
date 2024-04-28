@@ -6,6 +6,9 @@ type BoundsStruct interface {
 
 func Search(list []BoundsStruct, pos int) []int {
 	listLen := len(list)
+	if listLen == 0 {
+		return []int{-1, -1}
+	}
 	i := (listLen - 1) / 2
 	step := i
 	halfStep := func() {
@@ -19,7 +22,6 @@ func Search(list []BoundsStruct, pos int) []int {
 	// 2.between ( last end and current start ) or ( current end and next start )
 	for {
 		halfStep()
-		// fmt.Println("for round:", i)
 		v := list[i]
 		vBound := v.getBounds()
 		// between bounds
