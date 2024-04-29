@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/charmbracelet/bubbletea v0.25.0
 	github.com/mattn/go-runewidth v0.0.15
+	github.com/ogios/ansisgr-process v0.1.2
 )
 
 require (

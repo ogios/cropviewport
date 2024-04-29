@@ -2,13 +2,13 @@ package cropviewport
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/ogios/cropviewport/process"
+	process "github.com/ogios/ansisgr-process"
 )
 
 type CropViewportModel struct {
 	ANSITableList *process.ANSITableList
 	KeyMap        map[string]func() tea.Cmd
-	Sublines      []*process.SubLine
+	Sublines      []*SubLine
 	Block         [4]int
 }
 
@@ -57,13 +57,13 @@ func (c *CropViewportModel) SetBlock(x, y, width, height int) {
 	}
 }
 
-func (c *CropViewportModel) SetContent(s string) (*process.ANSITableList, []*process.SubLine) {
-	t, l := process.ProcessContent(s)
+func (c *CropViewportModel) SetContent(s string) (*process.ANSITableList, []*SubLine) {
+	t, l := ProcessContent(s)
 	c.SetContentGivenData(t, l)
 	return t, l
 }
 
-func (c *CropViewportModel) SetContentGivenData(tableList *process.ANSITableList, lines []*process.SubLine) {
+func (c *CropViewportModel) SetContentGivenData(tableList *process.ANSITableList, lines []*SubLine) {
 	c.ANSITableList = tableList
 	c.Sublines = lines
 }
@@ -111,11 +111,11 @@ func (c *CropViewportModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // const NO_CONTENT = "No content available"
 // var NO_CONTENT_TABLE, NO_CONTENT_SUBLINES = process.ProcessContent("No content available")
-var NO_CONTENT_TABLE, NO_CONTENT_SUBLINES = process.ProcessContent("No content available")
+var NO_CONTENT_TABLE, NO_CONTENT_SUBLINES = ProcessContent("No content available")
 
 func (c *CropViewportModel) View() string {
 	if c.ANSITableList == nil || c.Sublines == nil {
-		return process.CropView(NO_CONTENT_TABLE, NO_CONTENT_SUBLINES, c.Block[0], c.Block[1], c.Block[2], c.Block[3])
+		return CropView(NO_CONTENT_TABLE, NO_CONTENT_SUBLINES, c.Block[0], c.Block[1], c.Block[2], c.Block[3])
 	}
-	return process.CropView(c.ANSITableList, c.Sublines, c.Block[0], c.Block[1], c.Block[2], c.Block[3])
+	return CropView(c.ANSITableList, c.Sublines, c.Block[0], c.Block[1], c.Block[2], c.Block[3])
 }
