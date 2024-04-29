@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/alecthomas/chroma/v2/quick"
@@ -81,7 +82,7 @@ func getLinesRecords(dc *diffcontext.DiffConstractor) [][3]int {
 		}
 		n += length + 1
 	}
-	return records
+	return slices.Clip(records)
 }
 
 func highlightCodes(dc *diffcontext.DiffConstractor) error {

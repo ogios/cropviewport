@@ -55,10 +55,7 @@ const (
 	line_break_string = "\n"
 )
 
-// separate ansi and normal string, separate lines into RuneData list
-func ProcessContent(s string) (*process.ANSITableList, []*SubLine) {
-	// separate ansi and normal string
-	atablelist, raw := process.Extract(s)
+func SplitLines(raw string) []*SubLine {
 	// split lines
 	rawlines := strings.Split(raw, line_break_string)
 	// process every line into runedata list and record line's bounds
@@ -73,6 +70,14 @@ func ProcessContent(s string) (*process.ANSITableList, []*SubLine) {
 		}
 		index = lastIndex + 1
 	}
+	return sublines
+}
+
+// separate ansi and normal string, separate lines into RuneData list
+func ProcessContent(s string) (*process.ANSITableList, []*SubLine) {
+	// separate ansi and normal string
+	atablelist, raw := process.Extract(s)
+	sublines := SplitLines(raw)
 	return atablelist, sublines
 }
 
