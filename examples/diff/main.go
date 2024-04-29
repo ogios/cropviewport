@@ -1,11 +1,9 @@
 package main
 
-import (
-	tea "github.com/charmbracelet/bubbletea"
-)
+import tea "github.com/charmbracelet/bubbletea"
 
 func main() {
-	// NewTestModel().View()
+	// fmt.Println(NewTestModel().View())
 	if _, err := tea.NewProgram(NewTestModel()).Run(); err != nil {
 		panic(err)
 	}

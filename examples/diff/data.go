@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 
 	"github.com/alecthomas/chroma/v2/quick"
@@ -28,6 +27,17 @@ var BorderStyle = lipgloss.NewStyle().
 
 var code1, code2 string
 
+// var (
+// 	code1 = `11111
+// 11111
+// 11111
+// 11111`
+// 	code2 = `22222
+// 11111
+// 22222
+// 11111`
+// )
+
 func init() {
 	_c1, err := os.ReadFile("./code1.txt")
 	if err != nil {
@@ -48,41 +58,15 @@ func diffContent() (*process.ANSITableList, []*cropviewport.SubLine, error) {
 	diffs = dmp.DiffCleanupEfficiency(diffs)
 	dc := diffcontext.New()
 	dc.AddDiffs(diffs)
-	records := getLinesRecords(dc)
+	// mls, records := dc.GetMixedLinesAndStateRecord()
+	_, records := dc.GetMixedLinesAndStateRecord()
 	err := highlightCodes(dc)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	at, sl := highlightDiffLines(dc, records)
+	at, sl := highlightDiffLines(dc.GetMixed(), records)
 	return at, sl, err
-}
-
-const (
-	line_break = '\n'
-	tab        = "\t"
-)
-
-var empty_records = make([][3]int, 0)
-
-func getLinesRecords(dc *diffcontext.DiffConstractor) [][3]int {
-	mls := dc.GetMixedLines()
-	if len(mls) == 0 {
-		return empty_records
-	}
-	records := make([][3]int, 0)
-	var n int
-	for _, ml := range mls {
-		length := len(ml.Data) + strings.Count(string(ml.Data), tab)*(4-1)
-		switch ml.State {
-		case diffmatchpatch.DiffInsert:
-			records = append(records, [3]int{int(diffmatchpatch.DiffInsert), n, n + length})
-		case diffmatchpatch.DiffDelete:
-			records = append(records, [3]int{int(diffmatchpatch.DiffDelete), n, n + length})
-		}
-		n += length + 1
-	}
-	return slices.Clip(records)
 }
 
 func highlightCodes(dc *diffcontext.DiffConstractor) error {
@@ -133,8 +117,8 @@ var (
 	greenBG = []byte(fmt.Sprintf("%s%sm", termenv.CSI, termenv.RGBColor("#008033").Sequence(true)))
 )
 
-func highlightDiffLines(dc *diffcontext.DiffConstractor, records [][3]int) (*process.ANSITableList, []*cropviewport.SubLine) {
-	at, sl := cropviewport.ProcessContent(dc.GetMixed())
+func highlightDiffLines(content string, records [][3]int) (*process.ANSITableList, []*cropviewport.SubLine) {
+	at, sl := cropviewport.ProcessContent(content)
 	for _, v := range records {
 		var color []byte
 		switch v[0] {
