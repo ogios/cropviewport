@@ -430,10 +430,10 @@ func CropView(atablelist *ANSITableList, lines []*SubLine, x, y, width, height i
 				lineRunes[len(lineRunes)-1] = SPACE_RUNEDATA
 			}
 
-			// start from lineRunes start
-			index := 0
 			// atable slice
 			atables := atablelist.GetSlice(start+sl.Bound[0], end+sl.Bound[0])
+			// start from lineRunes start
+			index := 0
 			// every table
 			for _, a := range atables {
 				// table's sub tables
