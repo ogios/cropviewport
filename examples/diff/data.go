@@ -9,7 +9,8 @@ import (
 	"github.com/alecthomas/chroma/v2/quick"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
-	"github.com/ogios/cropviewport/process"
+	process "github.com/ogios/ansisgr-process"
+	"github.com/ogios/cropviewport"
 	"github.com/ogios/go-diffcontext"
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
@@ -39,7 +40,7 @@ func init() {
 	code2 = string(_c2)
 }
 
-func diffContent() (*process.ANSITableList, []*process.SubLine, error) {
+func diffContent() (*process.ANSITableList, []*cropviewport.SubLine, error) {
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(string(code1), string(code2), true)
 	diffs = dmp.DiffCleanupSemantic(diffs)
@@ -131,8 +132,8 @@ var (
 	greenBG = []byte(fmt.Sprintf("%s%sm", termenv.CSI, termenv.RGBColor("#008033").Sequence(true)))
 )
 
-func highlightDiffLines(dc *diffcontext.DiffConstractor, records [][3]int) (*process.ANSITableList, []*process.SubLine) {
-	at, sl := process.ProcessContent(dc.GetMixed())
+func highlightDiffLines(dc *diffcontext.DiffConstractor, records [][3]int) (*process.ANSITableList, []*cropviewport.SubLine) {
+	at, sl := cropviewport.ProcessContent(dc.GetMixed())
 	for _, v := range records {
 		var color []byte
 		switch v[0] {

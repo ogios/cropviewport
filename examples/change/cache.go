@@ -1,6 +1,9 @@
 package main
 
-import "github.com/ogios/cropviewport/process"
+import (
+	process "github.com/ogios/ansisgr-process"
+	"github.com/ogios/cropviewport"
+)
 
 type ContentCacher[T any] struct {
 	pool map[string]T
@@ -23,5 +26,5 @@ func NewStringCacher[T any](new func(p string) T) *ContentCacher[T] {
 type ContentData struct {
 	Raw   string
 	Table *process.ANSITableList
-	Lines []*process.SubLine
+	Lines []*cropviewport.SubLine
 }

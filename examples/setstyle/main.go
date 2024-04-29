@@ -8,7 +8,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
 	"github.com/ogios/cropviewport"
-	"github.com/ogios/cropviewport/process"
 )
 
 const (
@@ -36,7 +35,7 @@ func NewTestModel() tea.Model {
 	t := &TestViewModel{}
 	crop := cropviewport.NewCropViewportModel().(*cropviewport.CropViewportModel)
 	crop.SetBlock(0, 0, WIDTH, HEIGHT)
-	al, sl := process.ProcessContent(CONTENT)
+	al, sl := cropviewport.ProcessContent(CONTENT)
 	al.SetStyle([]byte(fmt.Sprintf("%s%sm", termenv.CSI, termenv.RGBColor("#ff00ff").Sequence(true))), 7, 4*6-2)
 	crop.SetContentGivenData(al, sl)
 	t.CropViewModel = crop
