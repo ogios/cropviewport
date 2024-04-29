@@ -75,12 +75,14 @@ func highlightCodes(dc *diffcontext.DiffConstractor) error {
 		return err
 	}
 	linesC1 := strings.Split(c1, "\n")
+	// linesC1 := strings.Split(code1, "\n")
 
 	c2, err := highlight(code2)
 	if err != nil {
 		return err
 	}
 	linesC2 := strings.Split(c2, "\n")
+	// linesC2 := strings.Split(code2, "\n")
 	i1 := 0
 	i2 := 0
 	for _, dl := range dc.Lines {
@@ -134,7 +136,7 @@ func highlightDiffLines(content string, records [][3]int) (*process.ANSITableLis
 
 func highlight(c string) (string, error) {
 	buf := new(bytes.Buffer)
-	err := quick.Highlight(buf, string(c), "go", "terminal16m", "catppuccin-mocha")
+	err := quick.Highlight(buf, string(c), "sum", "terminal16m", "catppuccin-mocha")
 	if err != nil {
 		return "", err
 	}
