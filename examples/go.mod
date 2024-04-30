@@ -9,7 +9,7 @@ require (
 	github.com/muesli/termenv v0.15.2
 	github.com/ogios/ansisgr-process v0.1.3
 	github.com/ogios/cropviewport v0.2.3
-	github.com/ogios/go-diffcontext v0.3.3
+	github.com/ogios/go-diffcontext v0.3.5
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3
 )
 
