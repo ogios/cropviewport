@@ -1,0 +1,2 @@
+	ms[0].m = utree.NewTreeModel(comp.TREE_NODE, ms[0].block)
+ms[1].m = uview.NewViewModel(ms[1].block)

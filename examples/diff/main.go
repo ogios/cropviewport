@@ -1,10 +1,10 @@
 package main
 
-import tea "github.com/charmbracelet/bubbletea"
+import "fmt"
 
 func main() {
-	// fmt.Println(NewTestModel().View())
-	if _, err := tea.NewProgram(NewTestModel()).Run(); err != nil {
-		panic(err)
-	}
+	fmt.Println(NewTestModel().View())
+	// if _, err := tea.NewProgram(NewTestModel()).Run(); err != nil {
+	// 	panic(err)
+	// }
 }

@@ -39,15 +39,11 @@ var code1, code2 string
 // )
 
 func init() {
-	_c1, err := os.ReadFile("./code1.txt")
-	if err != nil {
-		panic(err)
-	}
+	// _c1, err := os.ReadFile("./code1.txt")
+	// _c2, err := os.ReadFile("./code2.txt")
+	_c1, _ := os.ReadFile("./test1")
+	_c2, _ := os.ReadFile("./test2")
 	code1 = string(_c1)
-	_c2, err := os.ReadFile("./code2.txt")
-	if err != nil {
-		panic(err)
-	}
 	code2 = string(_c2)
 }
 
@@ -70,19 +66,19 @@ func diffContent() (*process.ANSITableList, []*cropviewport.SubLine, error) {
 }
 
 func highlightCodes(dc *diffcontext.DiffConstractor) error {
-	c1, err := highlight(code1)
-	if err != nil {
-		return err
-	}
-	linesC1 := strings.Split(c1, "\n")
-	// linesC1 := strings.Split(code1, "\n")
+	// c1, err := highlight(code1)
+	// if err != nil {
+	// 	return err
+	// }
+	// linesC1 := strings.Split(c1, "\n")
+	linesC1 := strings.Split(code1, "\n")
 
-	c2, err := highlight(code2)
-	if err != nil {
-		return err
-	}
-	linesC2 := strings.Split(c2, "\n")
-	// linesC2 := strings.Split(code2, "\n")
+	// c2, err := highlight(code2)
+	// if err != nil {
+	// 	return err
+	// }
+	// linesC2 := strings.Split(c2, "\n")
+	linesC2 := strings.Split(code2, "\n")
 	i1 := 0
 	i2 := 0
 	for _, dl := range dc.Lines {
