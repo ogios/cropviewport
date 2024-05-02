@@ -41,8 +41,10 @@ var code1, code2 string
 func init() {
 	// _c1, err := os.ReadFile("./code1.txt")
 	// _c2, err := os.ReadFile("./code2.txt")
-	_c1, _ := os.ReadFile("./test1")
-	_c2, _ := os.ReadFile("./test2")
+	// _c1, _ := os.ReadFile("./test1")
+	// _c2, _ := os.ReadFile("./test2")
+	_c1, _ := os.ReadFile("./layout21")
+	_c2, _ := os.ReadFile("./layout22")
 	code1 = string(_c1)
 	code2 = string(_c2)
 }
